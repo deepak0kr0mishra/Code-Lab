@@ -219,7 +219,7 @@ public class Main {
     document.body.appendChild(anchor);
     anchor.click();
     anchor.remove();
-    URL.revokeObjectURL(url);
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     showToast("Exported " + filename);
   }
 
@@ -250,8 +250,10 @@ public class Main {
     importFile.value = "";
   }
 
-  importButton.addEventListener("click", () => importFile.click());
-  importFile.addEventListener("change", () => importSource(importFile.files[0]));
+  importFile.addEventListener("change", () => {
+    const file = importFile.files && importFile.files[0];
+    if (file) importSource(file);
+  });
   exportButton.addEventListener("click", exportSource);
 
   $("reset").addEventListener("click", () => {
