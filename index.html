@@ -61,8 +61,10 @@
             <span id="fileName" class="text-xs font-semibold text-zinc-200">main.cpp</span>
           </div>
           <div class="flex items-center gap-2">
-            <input id="importFile" type="file" accept=".c,.h,.cpp,.cc,.cxx,.hpp,.py,.java,.txt" class="hidden" aria-label="Import source file">
-            <button id="import" type="button" class="rounded-md border border-zinc-700 bg-zinc-800 px-3 py-2 text-xs hover:border-zinc-500">Import</button>
+            <label class="cursor-pointer rounded-md border border-zinc-700 bg-zinc-800 px-3 py-2 text-xs hover:border-zinc-500">
+              Import
+              <input id="importFile" type="file" accept=".c,.h,.cpp,.cc,.cxx,.hpp,.py,.java,.txt" class="sr-only" aria-label="Import source file">
+            </label>
             <button id="export" type="button" class="rounded-md border border-zinc-700 bg-zinc-800 px-3 py-2 text-xs hover:border-zinc-500">Export</button>
             <label for="language" class="sr-only">Programming language</label>
             <select id="language" class="rounded-md border border-zinc-700 bg-zinc-800 px-2 py-2 text-xs text-zinc-100">
