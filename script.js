@@ -185,6 +185,75 @@ public class Main {
   languageSelect.addEventListener("change", () => loadLanguage(languageSelect.value));
   editor.on("change", saveDraft);
   editor.on("cursorActivity", saveDraft);
+  const importButton = $("import");
+  const importFile = $("importFile");
+  const exportButton = $("export");
+
+  function extensionForLanguage(language) {
+    return { cpp: "cpp", c: "c", python: "py", java: "java" }[language] || "txt";
+  }
+
+  function languageForFile(filename) {
+    const extension = filename.split(".").pop().toLowerCase();
+    const match = {
+      c: "c",
+      h: "c",
+      cpp: "cpp",
+      cc: "cpp",
+      cxx: "cpp",
+      hpp: "cpp",
+      py: "python",
+      java: "java"
+    }[extension];
+    return match || null;
+  }
+
+  function exportSource() {
+    const source = editor.getValue();
+    const filename = LANGUAGES[activeLanguage].file;
+    const blob = new Blob([source], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = filename;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(url);
+    showToast("Exported " + filename);
+  }
+
+  function importSource(file) {
+    if (!file) return;
+    const inferredLanguage = languageForFile(file.name);
+    const reader = new FileReader();
+
+    reader.addEventListener("load", () => {
+      if (typeof reader.result !== "string") {
+        showToast("Could not read that file.");
+        return;
+      }
+
+      if (inferredLanguage && inferredLanguage !== activeLanguage) {
+        languageSelect.value = inferredLanguage;
+        loadLanguage(inferredLanguage);
+      }
+
+      editor.setValue(reader.result);
+      saveDraft();
+      editor.focus();
+      showToast("Imported " + file.name);
+    });
+
+    reader.addEventListener("error", () => showToast("Could not read that file."));
+    reader.readAsText(file);
+    importFile.value = "";
+  }
+
+  importButton.addEventListener("click", () => importFile.click());
+  importFile.addEventListener("change", () => importSource(importFile.files[0]));
+  exportButton.addEventListener("click", exportSource);
+
   $("reset").addEventListener("click", () => {
     editor.setValue(LANGUAGES[activeLanguage].starter);
     showToast("Starter code restored.");
